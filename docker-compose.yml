@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # MySQL 서비스
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - webnet
+
+  # WordPress 서비스
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    ports:
+      - "80:80"
+    volumes:
+      - ./wordpress/wp-content:/var/www/html/wp-content
+    networks:
+      - webnet
+    depends_on:
+      - mysql
+
+# Volumes 정의
+volumes:
+  mysql_data:
+  wordpress_data:
+
+# Networks 정의
+networks:
+  webnet:
+    driver: bridge
+
